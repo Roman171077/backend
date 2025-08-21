@@ -1,0 +1,30 @@
+# ─── Python bytecode ────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ─── Virtual environments ───────────────────────────
+.venv/
+venv/
+env/
+
+# ─── Distribution / packaging ───────────────────────
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ─── Logs ───────────────────────────────────────────
+*.log
+
+# ─── Environment / secrets ──────────────────────────
+.env
+.env.*
+
+# ─── IDE / editor configs ───────────────────────────
+.idea/
+.vscode/
+
+# ─── OS files ───────────────────────────────────────
+.DS_Store
+Thumbs.db

@@ -1,0 +1,55 @@
+import os
+import logging
+from pathlib import Path
+from datetime import datetime, timedelta
+import zoneinfo
+
+import requests
+from dotenv import load_dotenv
+from sqlalchemy.orm import Session
+from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.triggers.cron import CronTrigger
+
+# ─── StarLine helper-модули (класть рядом) ─────────────────────────────────
+from get_app_code import get_app_code
+from get_app_token import get_app_token
+from get_slid_user_token import get_slid_user_token
+from get_slnet_token import get_slnet_token
+from get_user_id import get_user_id
+
+# ─── Ваши модели/CRUD/DB-клиент ────────────────────────────────────────────
+from app.db import SessionLocal
+from app.crud import create_beacon_coordinate
+from app.schemas import BeaconCoordinateCreate
+
+from sqlalchemy.orm import Session
+from . import models, schemas
+
+import os
+from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
+
+import logging
+import requests
+import hashlib
+import argparse
+
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+
+from . import db, crud, models, schemas
+from datetime import datetime
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    Float,
+    SmallInteger,
+    Boolean,
+    DateTime,
+)
+from .db import Base
+from datetime import datetime
+from pydantic import BaseModel, field_validator, ConfigDict
