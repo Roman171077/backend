@@ -110,17 +110,20 @@ def record_beacon_coordinate() -> None:
         dt_utc   = datetime.fromtimestamp(ts_dev, tz=timezone.utc)
         dt_local = dt_utc.astimezone(IRKUTSK)
 
-        today = dt_local.date()
-        # Границы рабочего дня
-        start_thresh = datetime.combine(today, time(8, 0), tzinfo=IRKUTSK)
-        end_thresh   = datetime.combine(today, time(21, 59), tzinfo=IRKUTSK)
+        today_local = dt_local.date()
+        # Границы рабочего дня в локальном времени
+        start_local = datetime.combine(today_local, time(8, 0), tzinfo=IRKUTSK)
+        end_local   = datetime.combine(today_local, time(21, 59), tzinfo=IRKUTSK)
+        # Переводим в UTC для сравнения с координатами, которые сохраняются по UTC
+        start_thresh = start_local.astimezone(timezone.utc)
+        end_thresh   = end_local.astimezone(timezone.utc)
 
         # 2) Старт дня: пересечение порога 08:00
         if (_last_run_time is None or _last_run_time < start_thresh) \
-           and dt_local >= start_thresh \
-           and _last_work_date != today:
+           and dt_utc >= start_thresh \
+           and _last_work_date != today_local:
 
-            _last_work_date = today
+            _last_work_date = today_local
             found = rt_processor._find_zone(BeaconCoordinateCreate(
                 latitude=lat, longitude=lon, recorded_at=dt_utc
             ))
@@ -155,7 +158,7 @@ def record_beacon_coordinate() -> None:
 
         # 5) Финиш дня: пересечение порога 21:59
         if (_last_run_time is None or _last_run_time < end_thresh) \
-           and dt_local >= end_thresh:
+           and dt_utc >= end_thresh:
 
             found = rt_processor._find_zone(db_coord)
             if found:
@@ -164,7 +167,7 @@ def record_beacon_coordinate() -> None:
                 send_to_telegram("🔔 Конец работы: автомобиль завершил день в пути")
 
         # 6) Обновляем отметку последнего запуска
-        _last_run_time = dt_local
+        _last_run_time = dt_utc
 
     except Exception as e:
         logger.error("❌ [%s] Ошибка записи: %s", now_local.isoformat(), e, exc_info=True)
